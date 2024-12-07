@@ -547,7 +547,9 @@ class TextRecognizer(object):
             width_list.append(img.shape[1] / float(img.shape[0]))
         # Sorting can speed up the recognition process
         indices = np.argsort(np.array(width_list))
-        rec_res = [["", 0.0]] * img_num
+        # rec_res will store a character and conf list
+        rec_res = [["", []]] * img_num
+
         batch_num = self.rec_batch_num
         st = time.time()
         if self.benchmark:

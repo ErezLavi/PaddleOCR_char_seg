@@ -146,15 +146,19 @@ class TextSystem(object):
         logger.debug("rec_res num  : {}, elapsed : {}".format(len(rec_res), elapse))
         if self.args.save_crop_res:
             self.draw_crop_rec_res(self.args.crop_res_save_dir, img_crop_list, rec_res)
-        filter_boxes, filter_rec_res = [], []
+        filter_boxes, filter_rec_res, filter_scores = [], [], []
         for box, rec_result in zip(dt_boxes, rec_res):
-            text, score = rec_result[0], rec_result[1]
-            if score >= self.drop_score:
-                filter_boxes.append(box)
-                filter_rec_res.append(rec_result)
+            text, scores = rec_result[0], rec_result[1]
+            result = ""
+            for i in range(0,len(scores)):
+                if scores[i] >= self.drop_score:
+                    result += rec_result[0][i]
+                    filter_scores.append(scores[i])
+            filter_boxes.append(box)
+            filter_rec_res.append(result)
         end = time.time()
         time_dict["all"] = end - start
-        return filter_boxes, filter_rec_res, time_dict
+        return filter_boxes, filter_rec_res, time_dict, filter_scores
 
 
 def sorted_boxes(dt_boxes):

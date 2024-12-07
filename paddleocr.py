@@ -757,12 +757,15 @@ class PaddleOCR(predict_system.TextSystem):
             ocr_res = []
             for img in imgs:
                 img = preprocess_image(img)
-                dt_boxes, rec_res, _ = self.__call__(img, cls, slice)
+                dt_boxes, rec_res, _, conf_list= self.__call__(img, cls, slice)
                 if not dt_boxes and not rec_res:
                     ocr_res.append(None)
                     continue
+                # add confidence score to recognition result
                 tmp_res = [[box.tolist(), res] for box, res in zip(dt_boxes, rec_res)]
+                # add conf score per character to recognition result
                 ocr_res.append(tmp_res)
+            ocr_res.append(conf_list)
             return ocr_res
         elif det and not rec:
             ocr_res = []
